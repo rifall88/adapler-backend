@@ -1,0 +1,88 @@
+import pool from "../databases/dbConfig.js";
+
+export const findOtp = async (userId) => {
+  const result = await pool.query(
+    `SELECT * FROM auth.otp_logs
+     WHERE user_id = $1
+     AND is_used = false
+     AND expired_at > NOW()
+     ORDER BY created_at DESC
+     LIMIT 1`,
+    [userId],
+  );
+
+  return result.rows[0];
+};
+
+export const findOtpByUserId = async (userId) => {
+  const result = await pool.query(
+    `SELECT * FROM auth.otp_logs
+     WHERE user_id = $1
+     AND is_used = false
+     AND expired_at > NOW()
+     AND type = 'change_email'
+     ORDER BY created_at DESC
+     LIMIT 1`,
+    [userId],
+  );
+
+  return result.rows[0];
+};
+
+export const createOtp = async (data) => {
+  const { id, user_id, otp_code, type, target, expired_at } = data;
+
+  const result = await pool.query(
+    `INSERT INTO auth.otp_logs
+    (id, user_id, otp_code, type, target, expired_at)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING *`,
+    [id, user_id, otp_code, type, target, expired_at],
+  );
+
+  return result.rows[0];
+};
+
+export const incrementOtpAttempt = async (id, currentAttempt) => {
+  const newAttempt = currentAttempt + 1;
+
+  const result = await pool.query(
+    `UPDATE auth.otp_logs 
+     SET attempt_count = $1 
+     WHERE id = $2
+     RETURNING *`,
+    [newAttempt, id],
+  );
+
+  return result.rows[0];
+};
+
+export const verifyOtp = async (otpEntryId, userId) => {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    await client.query(
+      `UPDATE auth.otp_logs 
+       SET is_used = true 
+       WHERE id = $1`,
+      [otpEntryId],
+    );
+
+    await client.query(
+      `UPDATE auth.users 
+       SET is_verified = true 
+       WHERE id = $1`,
+      [userId],
+    );
+
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+};
