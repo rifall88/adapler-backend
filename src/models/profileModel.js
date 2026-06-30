@@ -15,10 +15,13 @@ export const createProfile = async (data) => {
 export const updateProfile = async (data, userId) => {
   const allowedColumns = [
     "full_name",
-    "phone",
     "birth_date",
-    "gender",
+    "bio",
     "profile_image",
+    "jenjang_pendidikan",
+    "jurusan",
+    "target_akademik",
+    "jam_belajar_harian",
   ];
   const fields = [];
   const values = [];
@@ -59,8 +62,9 @@ export const findUserAllProfile = async () => {
 
 export const findUserProfile = async (userId) => {
   const result = await pool.query(
-    `SELECT p.id, p.full_name, u.username, u.email, p.phone,
-    p.birth_date, p.gender, p.profile_image, u.role
+    `SELECT p.id, p.full_name, u.username, u.email, p.birth_date, p.bio,
+     p.profile_image, p.jenjang_pendidikan, p.jurusan, p.target_akademik,
+     p.jam_belajar_harian, u.role
     FROM user_management.profile_users p 
     INNER JOIN auth.users u ON p.user_id = u.id
     WHERE p.user_id = $1 

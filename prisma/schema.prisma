@@ -6,12 +6,13 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["auth", "user_management"]
+  schemas  = ["auth", "user_management", "task_management", "learning", "analytics"]
 }
 
 enum Role {
   admin
   user
+  model
   @@schema("auth")
 }
 
@@ -30,6 +31,19 @@ enum gender {
   @@schema("user_management")
 }
 
+enum Status {
+  selesai
+  belum_selesai
+  @@schema("task_management")
+}
+
+enum Prioritas {
+  tinggi
+  sedang
+  rendah
+  @@schema("task_management")
+}
+
 model User {
   id                 String           @id @default(uuid()) @db.Uuid
   username           String           @unique @db.VarChar(100)
@@ -40,7 +54,6 @@ model User {
   provider_id        String?          @db.VarChar(100)
   is_verified        Boolean          @default(false)
   is_active          Boolean          @default(true)
-  deletion_requested Boolean          @default(false)
   created_at         DateTime         @default(now()) @db.Timestamp(0)
   updated_at         DateTime         @default(now()) @updatedAt @db.Timestamp(0)
   deleted_at         DateTime?        @db.Timestamp(0)
@@ -48,23 +61,31 @@ model User {
   profile            ProfileUser?
   otp_logs           OtpLog[]
   password_resets    PasswordReset[]
+  task               TaskManagement[]
+  study_planner      StudyPlanner[]
+  material           Material[]
+  activity_log       ActivityLog[]
+  chat_history       ChatHistory[]
 
   @@map("users")
   @@schema("auth")
 }
 
 model ProfileUser {
-  id            String    @id @default(uuid()) @db.Uuid
-  user_id       String    @unique @db.Uuid
-  full_name     String?   @db.VarChar(255)
-  phone         String?   @db.VarChar(20)
-  birth_date    DateTime? @db.Date
-  gender        gender?
-  profile_image String?   @db.Text
-  created_at    DateTime  @default(now()) @db.Timestamp(0)
-  updated_at    DateTime  @default(now()) @updatedAt @db.Timestamp(0)
-  deleted_at    DateTime? @db.Timestamp(0)
-  user          User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id                   String     @id @default(uuid()) @db.Uuid
+  user_id              String     @unique @db.Uuid
+  full_name            String     @db.VarChar(255)
+  birth_date           DateTime?  @db.Date
+  bio                  String?    @db.Text
+  profile_image        String?    @db.Text
+  jenjang_pendidikan   String?    @db.VarChar(100)
+  jurusan              String?    @db.VarChar(100)
+  target_akademik      String?    @db.Text
+  jam_belajar_harian   Int?
+  created_at           DateTime   @default(now()) @db.Timestamp(0)
+  updated_at           DateTime   @default(now()) @updatedAt @db.Timestamp(0)
+  deleted_at           DateTime?  @db.Timestamp(0)
+  user                 User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("profile_users")
   @@schema("user_management")
@@ -100,14 +121,84 @@ model PasswordReset {
 }
 
 model TaskManagement {
-  id         String    @id @default(uuid()) @db.Uuid
-  user_id    String    @db.Uuid
-  title      String    @unique @db.Text
-  deadline   DateTime  @db.Timestamp(0)
-  status     String    @db.VarChar(100)
-  created_at DateTime  @default(now()) @db.Timestamp(0)
-  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id            String      @id @default(uuid()) @db.Uuid
+  user_id       String      @db.Uuid
+  task_name     String      @db.VarChar(100)
+  deadline      DateTime    @db.Timestamp(0)
+  prioritas     Prioritas
+  status        Status      @default(belum_selesai)
+  created_at    DateTime    @default(now()) @db.Timestamp(0)
+  updated_at    DateTime    @default(now()) @updatedAt @db.Timestamp(0)
+  user          User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  @@map("password_resets")
-  @@schema("auth")
+  @@map("task")
+  @@schema("task_management")
+}
+
+model StudyPlanner {
+  id                 String          @id @default(uuid()) @db.Uuid
+  user_id            String          @db.Uuid
+  tanggal            DateTime        @db.Date
+  detail_jadwal      Json
+  created_at         DateTime        @default(now()) @db.Timestamp(0)
+  user               User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("study_planer")
+  @@schema("analytics")
+}
+
+model Material {
+  id                 String          @id @default(uuid()) @db.Uuid
+  user_id            String          @db.Uuid
+  nama_file          String          @db.Text
+  ringkasan          String?         @db.Text
+  poin_penting       Json?           
+  kata_kunci         Json?           
+  created_at         DateTime        @default(now()) @db.Timestamp(0)
+  updated_at         DateTime        @default(now()) @updatedAt @db.Timestamp(0)
+  user               User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  quiz               Quiz[]
+
+  @@map("material")
+  @@schema("analytics")
+}
+
+model Quiz {
+  id                 String          @id @default(uuid()) @db.Uuid
+  material_id        String          @db.Uuid
+  tipe_soal          String          @db.VarChar(100)
+  pertanyaan         String          @db.Text
+  kunci_jawaban      String          @db.Text
+  pembahasan         String?         @db.Text
+  createdAt          DateTime        @default(now())
+  material           Material        @relation(fields: [material_id], references: [id], onDelete: Cascade)
+
+  @@map("quiz")
+  @@schema("learning")
+}
+
+model ActivityLog {
+  id                  String          @id @default(uuid()) @db.Uuid
+  user_id             String          @db.Uuid
+  jenis_aktivitas     String          
+  nilai_tugas         Float?          
+  keterangan          String?         @db.Text
+  createdAt           DateTime        @default(now())
+  user                User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("activity_log")
+  @@schema("analytics")
+}
+
+model ChatHistory {
+  id                 String          @id @default(uuid()) @db.Uuid
+  user_id            String          @db.Uuid
+  role               Role          
+  pesan              String          @db.Text
+  createdAt          DateTime        @default(now())
+  user               User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("chat_history")
+  @@schema("learning")
 }

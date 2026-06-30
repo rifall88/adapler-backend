@@ -5,6 +5,8 @@ import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "./docs/swagger.json" with { type: "json" };
 import userRoute from "./routes/userRoute.js";
 import authRoute from "./routes/authRoute.js";
+import passwordResetRoute from "./routes/passwordResetRoute.js";
+import profileRoute from "./routes/profileRoute.js";
 
 dotenv.config();
 
@@ -28,6 +30,8 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use("/users", userRoute);
 app.use("/auth", authRoute);
+app.use("/forgot-password", passwordResetRoute);
+app.use("/profiles", profileRoute);
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
