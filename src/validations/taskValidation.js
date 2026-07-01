@@ -1,0 +1,74 @@
+import Joi from "joi";
+
+export const createTaskValidation = Joi.object({
+  task_name: Joi.string().trim().min(3).max(100).required().messages({
+    "string.empty": "Task name cannot be empty or just spaces",
+    "string.min": "Task name must be at least 3 characters long",
+    "string.max": "Task name must be at most 100 characters long",
+    "any.required": "Task name is required",
+  }),
+
+  deadline_date: Joi.date().iso().required().messages({
+    "date.base": "Deadline date must be a valid date",
+    "date.format": "Please provide a valid date format (YYYY-MM-DD)",
+    "any.required": "Deadline date is required",
+  }),
+
+  deadline_time: Joi.string()
+    .pattern(/^([01]\d|2[0-3]):([0-5]\d)$/)
+    .required()
+    .messages({
+      "string.empty": "Deadline time cannot be empty",
+      "string.pattern.base": "Deadline time must use HH:mm format",
+      "any.required": "Deadline time is required",
+    }),
+
+  prioritas: Joi.string()
+    .valid("tinggi", "sedang", "rendah")
+    .required()
+    .messages({
+      "any.only": 'Priority must be either "tinggi", "sedang", or "rendah"',
+      "any.required": "Priority is required",
+    }),
+
+  status: Joi.string().valid("selesai", "belum_selesai").required().messages({
+    "any.only": 'Status must be either "selesai" or "belum_selesai"',
+    "any.required": "Status is required",
+  }),
+});
+
+export const updateTaskValidation = Joi.object({
+  task_name: Joi.string().trim().min(3).max(100).allow("").optional().messages({
+    "string.min": "Task name must be at least 3 characters long",
+    "string.max": "Task name must be at most 100 characters long",
+  }),
+
+  deadline_date: Joi.date().iso().allow("").optional().messages({
+    "date.base": "Deadline date must be a valid date",
+    "date.format": "Please provide a valid date format (YYYY-MM-DD)",
+  }),
+
+  deadline_time: Joi.string()
+    .pattern(/^([01]\d|2[0-3]):([0-5]\d)$/)
+    .allow("")
+    .optional()
+    .messages({
+      "string.pattern.base": "Deadline time must use HH:mm format",
+    }),
+
+  prioritas: Joi.string()
+    .valid("tinggi", "sedang", "rendah")
+    .allow("")
+    .optional()
+    .messages({
+      "any.only": 'Priority must be either "tinggi", "sedang", or "rendah"',
+    }),
+
+  status: Joi.string()
+    .valid("selesai", "belum_selesai")
+    .allow("")
+    .optional()
+    .messages({
+      "any.only": 'Status must be either "selesai" or "belum_selesai"',
+    }),
+});

@@ -120,7 +120,7 @@ export const getUserProfile = async (req, res) => {
         message: "User not found",
       });
     }
-    res.status(200).json({
+    return res.status(200).json({
       status: "success",
       data: {
         id: user.id,
