@@ -8,11 +8,13 @@ export const createTaskValidation = Joi.object({
     "any.required": "Task name is required",
   }),
 
-  deadline_date: Joi.date().iso().required().messages({
-    "date.base": "Deadline date must be a valid date",
-    "date.format": "Please provide a valid date format (YYYY-MM-DD)",
-    "any.required": "Deadline date is required",
-  }),
+  deadline_date: Joi.string()
+    .pattern(/^\d{4}-\d{2}-\d{2}$/)
+    .required()
+    .messages({
+      "date.format": "Please provide a valid date format (YYYY-MM-DD)",
+      "any.required": "Deadline date is required",
+    }),
 
   deadline_time: Joi.string()
     .pattern(/^([01]\d|2[0-3]):([0-5]\d)$/)
@@ -22,6 +24,14 @@ export const createTaskValidation = Joi.object({
       "string.pattern.base": "Deadline time must use HH:mm format",
       "any.required": "Deadline time is required",
     }),
+
+  progres: Joi.number().integer().min(0).max(100).required().messages({
+    "number.base": "Progres must be a number",
+    "number.integer": "Progres must be an integer",
+    "number.min": "Progres must be at least 0%",
+    "number.max": "Progres cannot exceed 100%",
+    "any.required": "Progres is required",
+  }),
 
   prioritas: Joi.string()
     .valid("tinggi", "sedang", "rendah")
@@ -43,8 +53,7 @@ export const updateTaskValidation = Joi.object({
     "string.max": "Task name must be at most 100 characters long",
   }),
 
-  deadline_date: Joi.date().iso().allow("").optional().messages({
-    "date.base": "Deadline date must be a valid date",
+  deadline_date: Joi.string().allow("").optional().messages({
     "date.format": "Please provide a valid date format (YYYY-MM-DD)",
   }),
 
@@ -54,6 +63,19 @@ export const updateTaskValidation = Joi.object({
     .optional()
     .messages({
       "string.pattern.base": "Deadline time must use HH:mm format",
+    }),
+
+  progres: Joi.number()
+    .integer()
+    .min(0)
+    .max(100)
+    .allow("")
+    .optional()
+    .messages({
+      "number.base": "Progres must be a number",
+      "number.integer": "Progres must be an integer",
+      "number.min": "Progres must be at least 0%",
+      "number.max": "Progres cannot exceed 100%",
     }),
 
   prioritas: Joi.string()

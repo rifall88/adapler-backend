@@ -1,20 +1,26 @@
 import pool from "../databases/dbConfig.js";
 
 export const createTask = async (data) => {
-  const { id, user_id, task_name, deadline, prioritas, status } = data;
+  const { id, user_id, task_name, deadline, progres, prioritas, status } = data;
 
   const result = await pool.query(
-    `INSERT INTO task_management.task (id, user_id, task_name, deadline, prioritas, status)
-        VALUES ($1, $2, $3, $4, $5, $6)
+    `INSERT INTO task_management.task (id, user_id, task_name, deadline, progres, prioritas, status)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING*`,
-    [id, user_id, task_name, deadline, prioritas, status],
+    [id, user_id, task_name, deadline, progres, prioritas, status],
   );
 
   return result.rows[0];
 };
 
 export const updateTask = async (id, data, userId) => {
-  const allowedColumns = ["task_name", "deadline", "prioritas", "status"];
+  const allowedColumns = [
+    "task_name",
+    "deadline",
+    "progres",
+    "prioritas",
+    "status",
+  ];
   const fields = [];
   const values = [];
   let index = 1;

@@ -15,6 +15,7 @@ export const addTask = async (req, res) => {
       task_name,
       deadline_date,
       deadline_time,
+      progres,
       prioritas,
       status,
     } = req.body;
@@ -41,6 +42,7 @@ export const addTask = async (req, res) => {
       user_id: userId,
       task_name,
       deadline: combinedDeadline,
+      progres,
       prioritas,
       status,
     });
@@ -59,31 +61,49 @@ export const addTask = async (req, res) => {
 
 export const putTask = async (req, res) => {
   try {
-    const { task_name, deadline_date, deadline_time, prioritas, status } =
-      req.body;
+    const {
+      task_name,
+      deadline_date,
+      deadline_time,
+      progres,
+      prioritas,
+      status,
+    } = req.body;
     const userId = req.user.id;
     const id = req.params.id;
 
-    const today = new Date();
-    const combinedDeadline = new Date(`${deadline_date}T${deadline_time}:00`);
+    let combinedDeadline;
 
-    if (isNaN(combinedDeadline.getTime())) {
-      return res
-        .status(400)
-        .json({ status: "failed", message: "Format tanggal/waktu salah" });
-    }
+    if (deadline_date !== undefined || deadline_time !== undefined) {
+      if (!deadline_date || !deadline_time) {
+        return res.status(400).json({
+          status: "failed",
+          message: "Deadline date and deadline time must be provided together",
+        });
+      }
 
-    if (combinedDeadline < today) {
-      return res.status(400).json({
-        status: "failed",
-        message: "The deadline cannot be smaller than the current time",
-      });
+      combinedDeadline = new Date(`${deadline_date}T${deadline_time}:00`);
+
+      if (isNaN(combinedDeadline.getTime())) {
+        return res.status(400).json({
+          status: "failed",
+          message: "Format tanggal/waktu salah",
+        });
+      }
+
+      if (combinedDeadline < new Date()) {
+        return res.status(400).json({
+          status: "failed",
+          message: "The deadline cannot be smaller than the current time",
+        });
+      }
     }
 
     const data = Object.fromEntries(
       Object.entries({
         task_name,
         deadline: combinedDeadline,
+        progres,
         prioritas,
         status,
       }).filter(([_, value]) => {
