@@ -9,6 +9,7 @@ import passwordResetRoute from "./routes/passwordResetRoute.js";
 import profileRoute from "./routes/profileRoute.js";
 import taskRoute from "./routes/taskRoute.js";
 import studyPlaner from "./routes/studyPlanerRoute.js";
+import chatHistory from "./routes/chatHistoryRoute.js";
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use("/forgot-password", passwordResetRoute);
 app.use("/profiles", profileRoute);
 app.use("/task", taskRoute);
 app.use("/study-planner", studyPlaner);
+app.use("/chat-history", chatHistory);
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

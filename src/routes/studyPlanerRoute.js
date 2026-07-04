@@ -4,12 +4,27 @@ import {
   getStudyPlannerByUserId,
   deleteStudyPlannerById,
 } from "../controllers/studyPlanerController.js";
+import {
+  createStudyPlannerValidation,
+  deleteStudyPlannerValidation,
+} from "../validations/studyPlanerValidations.js";
+import { validateRequest } from "../middlewares/validationMiddleware.js";
 import { authenticate } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", authenticate, generateStudyPlanner);
+router.post(
+  "/",
+  authenticate,
+  validateRequest(createStudyPlannerValidation),
+  generateStudyPlanner,
+);
 router.get("/", authenticate, getStudyPlannerByUserId);
-router.delete("/:id", authenticate, deleteStudyPlannerById);
+router.delete(
+  "/:id",
+  authenticate,
+  validateRequest(deleteStudyPlannerById, "params"),
+  deleteStudyPlannerById,
+);
 
 export default router;

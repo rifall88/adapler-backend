@@ -20,6 +20,7 @@ export const putProfile = async (req, res) => {
     } = req.body;
 
     const userId = req.user.id;
+    const user = await findUserProfile(userId);
 
     const data = Object.fromEntries(
       Object.entries({
@@ -76,6 +77,12 @@ export const putProfile = async (req, res) => {
     }
 
     if (req.file) {
+      if (user.profile_image) {
+        const oldImagePath = path.join(process.cwd(), user.profile_image);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
       data.profile_image = `uploads/${req.file.filename}`;
     }
 

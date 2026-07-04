@@ -172,7 +172,7 @@ model Quiz {
   pertanyaan         String          @db.Text
   kunci_jawaban      String          @db.Text
   pembahasan         String?         @db.Text
-  createdAt          DateTime        @default(now())
+  created_at         DateTime        @default(now())
   material           Material        @relation(fields: [material_id], references: [id], onDelete: Cascade)
 
   @@map("quiz")
@@ -185,7 +185,7 @@ model ActivityLog {
   jenis_aktivitas     String          
   nilai_tugas         Float?          
   keterangan          String?         @db.Text
-  createdAt           DateTime        @default(now())
+  created_at          DateTime        @default(now())
   user                User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("activity_log")
@@ -197,7 +197,7 @@ model ChatHistory {
   user_id            String          @db.Uuid
   role               Role          
   pesan              String          @db.Text
-  createdAt          DateTime        @default(now())
+  created_at         DateTime        @default(now())
   user               User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("chat_history")

@@ -8,6 +8,7 @@ import {
 } from "../controllers/taskController.js";
 import {
   createTaskValidation,
+  taskParamsValidation,
   updateTaskValidation,
 } from "../validations/taskValidation.js";
 import { validateRequest } from "../middlewares/validationMiddleware.js";
@@ -21,6 +22,7 @@ router.get("/not-finish", authenticate, getTaskNotFinishedByUserId);
 router.put(
   "/:id",
   authenticate,
+  validateRequest(taskParamsValidation, "params"),
   validateRequest(updateTaskValidation),
   putTask,
 );

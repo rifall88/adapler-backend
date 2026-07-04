@@ -29,6 +29,9 @@
     },
     {
       "name": "Study Planner"
+    },
+    {
+      "name": "Chat History"
     }
   ],
   "paths": {
@@ -475,6 +478,58 @@
         ],
         "responses": {
           "200": { "description": "Study Planner deletion successful." }
+        }
+      }
+    },
+    "/chat-history": {
+      "post": {
+        "tags": ["Chat History"],
+        "summary": "Chatting with AI",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pesan": {
+                    "type": "string"
+                  }
+                },
+                "required": ["pesan"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Message sent successfully." }
+        }
+      },
+      "get": {
+        "tags": ["Chat History"],
+        "summary": "Get all chat history by user ID",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Ok." }
+        }
+      }
+    },
+    "/chat-history/{id}": {
+      "delete": {
+        "tags": ["Chat History"],
+        "summary": "Delete chat history by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Chat history deletion successful." }
         }
       }
     }

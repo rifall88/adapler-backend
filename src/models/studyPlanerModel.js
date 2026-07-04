@@ -15,7 +15,8 @@ export const createStudyPlanner = async (data) => {
 
 export const findStudyPlanner = async (userId) => {
   const result = await pool.query(
-    `SELECT * FROM analytics.study_planer
+    `SELECT id, user_id, tanggal, detail_jadwal
+    FROM analytics.study_planer
     WHERE user_id = $1`,
     [userId],
   );

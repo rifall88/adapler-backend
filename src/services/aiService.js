@@ -76,3 +76,23 @@ export const generateJadwalWithAI = async (tasks, profile, startTime) => {
     throw new Error("Gagal berkomunikasi dengan Gemini API");
   }
 };
+
+export const generateChatWithAI = async (history) => {
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+  const formattedHistory = history.map((msg) => ({
+    role: msg.role === "user" ? "user" : "model",
+    parts: [{ text: msg.pesan }],
+  }));
+
+  const chatContext = formattedHistory.slice(0, -1);
+  const lastUserMessage =
+    formattedHistory[formattedHistory.length - 1].parts[0].text;
+
+  const chat = model.startChat({
+    history: chatContext,
+  });
+
+  const result = await chat.sendMessage(lastUserMessage);
+  return result.response.text();
+};

@@ -50,7 +50,8 @@ export const updateTask = async (id, data, userId) => {
 
 export const findTaskNotFinishByUser = async (userId) => {
   const result = await pool.query(
-    `SELECT * FROM task_management.task
+    `SELECT id, user_id, task_name, deadline, progres, 
+    prioritas, status FROM task_management.task
     WHERE user_id = $1 AND status = 'belum_selesai'`,
     [userId],
   );
@@ -59,7 +60,8 @@ export const findTaskNotFinishByUser = async (userId) => {
 
 export const findTaskFinishByUser = async (userId) => {
   const result = await pool.query(
-    `SELECT * FROM task_management.task
+    `SELECT id, user_id, task_name, deadline, progres, 
+    prioritas, status FROM task_management.task
     WHERE user_id = $1 AND status = 'selesai'`,
     [userId],
   );
