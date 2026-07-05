@@ -15,7 +15,7 @@ export const generateJadwalWithAI = async (tasks, profile, startTime) => {
     const taskListString = tasks
       .map(
         (t, index) =>
-          `${index + 1}. ${t.task_name} (MK: ${t.mata_kuliah}) - Deadline: ${new Date(t.deadline).toLocaleString()} - Prioritas: ${t.prioritas} - Progres: ${t.progres || 0}%`,
+          `${index + 1}. ${t.task_name} - Deadline: ${t.deadline} - Prioritas: ${t.prioritas} - Progres: ${t.progres}%`,
       )
       .join("\n");
 
@@ -53,7 +53,7 @@ export const generateJadwalWithAI = async (tasks, profile, startTime) => {
       FORMAT JSON YANG WAJIB DIGUNAKAN:
       {
         "target_harian": "string",
-        "total_jam_belajar_direncanakan": "number",
+        "total_jam_belajar": "number",
         "jadwal": [
           {
             "waktu": "HH:mm - HH:mm",
@@ -95,4 +95,53 @@ export const generateChatWithAI = async (history) => {
 
   const result = await chat.sendMessage(lastUserMessage);
   return result.response.text();
+};
+
+export const generateMaterialSummaryWithAI = async (fileData) => {
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+
+  const prompt = `
+    Analisis materi pembelajaran berikut secara mendalam.
+    
+    ATURAN PENGERJAAN AI:
+    1. Ringkasan WAJIB dibuat padat (tepat 2-3 paragraf).
+    2. WAJIB mendeteksi dan menggunakan bahasa yang SAMA dengan bahasa mayoritas pada teks/materi yang diberikan (Misal: Jika materi bahasa Inggris, kembalikan JSON dalam bahasa Inggris).
+    3. Gunakan gaya bahasa yang edukatif, netral, dan mudah dipahami oleh semua kalangan pembaca (baik pelajar, mahasiswa, maupun profesional).
+    4. Semua "poin_penting" dan "kata_kunci" HARUS diekstrak secara akurat berdasarkan fakta nyata di dalam materi. JANGAN menambahkan informasi di luar konteks materi (Dilarang Halusinasi).
+    5. Pilih maksimal 5-7 "kata_kunci" yang mewakili konsep utama dari materi ini.
+    6. KEMBALIKAN HANYA FORMAT JSON YANG VALID SESUAI SKEMA DI BAWAH, TANPA KATA PENGANTAR, TANPA KATA PENUTUP, DAN TANPA FORMATTING MARKDOWN BLOCK CODE (\`\`\`).
+
+    SKEMA OUPUT JSON:
+    {
+      "ringkasan": "string",
+      "poin_penting": ["string", "string"],
+      "kata_kunci": ["string", "string"]
+    }
+  `;
+
+  let parts = [];
+
+  if (fileData.type === "text") {
+    parts = [prompt, `TEKS MATERI: "${fileData.content}"`];
+  } else if (fileData.type === "image") {
+    parts = [
+      prompt,
+      {
+        inlineData: {
+          data: fileData.content,
+          mimeType: fileData.mimeType,
+        },
+      },
+    ];
+  }
+
+  const result = await model.generateContent(parts);
+  let aiText = result.response.text();
+
+  aiText = aiText
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim();
+
+  return JSON.parse(aiText);
 };

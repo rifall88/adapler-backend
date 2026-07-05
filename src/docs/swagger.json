@@ -464,6 +464,22 @@
       }
     },
     "/study-planner/{id}": {
+      "get": {
+        "tags": ["Study Planner"],
+        "summary": "Get study planner by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Ok." }
+        }
+      },
       "delete": {
         "tags": ["Study Planner"],
         "summary": "Delete study planner by ID",
@@ -530,6 +546,75 @@
         ],
         "responses": {
           "200": { "description": "Chat history deletion successful." }
+        }
+      }
+    },
+    "/material": {
+      "post": {
+        "tags": ["Material"],
+        "summary": "Upload file",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["document"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Message sent successfully." }
+        }
+      },
+      "get": {
+        "tags": ["Material"],
+        "summary": "Get material by user ID",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Ok." }
+        }
+      }
+    },
+    "/material/{id}": {
+      "get": {
+        "tags": ["Material"],
+        "summary": "Get material by user ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Ok." }
+        }
+      },
+      "delete": {
+        "tags": ["Material"],
+        "summary": "Delete material by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Ok." }
         }
       }
     }
