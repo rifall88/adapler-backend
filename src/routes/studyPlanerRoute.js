@@ -2,6 +2,7 @@ import express from "express";
 import {
   generateStudyPlanner,
   getStudyPlannerByUserId,
+  getStudyPlannerById,
   deleteStudyPlannerById,
 } from "../controllers/studyPlanerController.js";
 import {
@@ -20,6 +21,7 @@ router.post(
   generateStudyPlanner,
 );
 router.get("/", authenticate, getStudyPlannerByUserId);
+router.get("/:id", authenticate, getStudyPlannerById);
 router.delete(
   "/:id",
   authenticate,

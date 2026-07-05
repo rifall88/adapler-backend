@@ -24,6 +24,17 @@ export const findStudyPlanner = async (userId) => {
   return result.rows;
 };
 
+export const findDetailStudyPlanner = async (id, userId) => {
+  const result = await pool.query(
+    `SELECT id, user_id, tanggal, detail_jadwal
+    FROM analytics.study_planer
+    WHERE id = $1 AND user_id = $2`,
+    [id, userId],
+  );
+
+  return result.rows[0];
+};
+
 export const deleteStudyPlanner = async (id, userId) => {
   const result = await pool.query(
     `DELETE FROM analytics.study_planer

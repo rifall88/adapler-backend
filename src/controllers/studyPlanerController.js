@@ -1,6 +1,7 @@
 import {
   createStudyPlanner,
   findStudyPlanner,
+  findDetailStudyPlanner,
   deleteStudyPlanner,
 } from "../models/studyPlanerModel.js";
 import { findUserProfile } from "../models/profileModel.js";
@@ -62,12 +63,54 @@ export const generateStudyPlanner = async (req, res) => {
 export const getStudyPlannerByUserId = async (req, res) => {
   try {
     const userId = req.user.id;
-
     const studyPlanner = await findStudyPlanner(userId);
+
+    const formattedData = (studyPlanner || []).map((Item) => {
+      const { tanggal, detail_jadwal, ...sisaData } = Item;
+      return {
+        ...sisaData,
+        tanggal: tanggal.toISOString().split("T")[0],
+        total_jam_belajar: detail_jadwal.total_jam_belajar,
+        target_harian: detail_jadwal.target_harian,
+      };
+    });
+
     return res.status(200).json({
       status: "success",
       data: {
-        studyPlanner: studyPlanner || [],
+        studyPlanner: formattedData || [],
+      },
+    });
+  } catch (error) {
+    console.error("Getting study planner error: ", error.message);
+    res.status(500).json({
+      status: "failed",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getStudyPlannerById = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const id = req.params.id;
+    const studyPlanner = await findDetailStudyPlanner(id, userId);
+
+    if (!studyPlanner) {
+      return res
+        .status(404)
+        .json({ status: "failed", message: "Study Planner not found" });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      data: {
+        id,
+        user_id: userId,
+        tanggal: studyPlanner.tanggal.toISOString().split("T")[0],
+        total_jam_belajar: studyPlanner.detail_jadwal.total_jam_belajar,
+        target_harian: studyPlanner.detail_jadwal.target_harian,
+        jadwal: studyPlanner.detail_jadwal.jadwal,
       },
     });
   } catch (error) {
