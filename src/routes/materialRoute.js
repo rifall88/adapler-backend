@@ -6,6 +6,8 @@ import {
   getDetailMaterial,
   deleteMaterialById,
 } from "../controllers/materialController.js";
+import { paramsValidation } from "../validations/paramsValidation.js";
+import { validateRequest } from "../middlewares/validationMiddleware.js";
 import { authenticate } from "../middlewares/authMiddleware.js";
 
 const storage = multer.diskStorage({
@@ -60,7 +62,17 @@ router.post(
   processNewMaterial,
 );
 router.get("/", authenticate, getMaterialUserId);
-router.get("/:id", authenticate, getDetailMaterial);
-router.delete("/:id", authenticate, deleteMaterialById);
+router.get(
+  "/:id",
+  authenticate,
+  validateRequest(paramsValidation, "params"),
+  getDetailMaterial,
+);
+router.delete(
+  "/:id",
+  authenticate,
+  validateRequest(paramsValidation, "params"),
+  deleteMaterialById,
+);
 
 export default router;

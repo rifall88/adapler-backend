@@ -4,10 +4,8 @@ import {
   getChatHistoryByUserId,
   deleteChatHistoryById,
 } from "../controllers/chatHistoryController.js";
-import {
-  createChatHistoryValidation,
-  deleteChatHistoryValidation,
-} from "../validations/chatHistoryValidation.js";
+import { createChatHistoryValidation } from "../validations/chatHistoryValidation.js";
+import { paramsValidation } from "../validations/paramsValidation.js";
 import { validateRequest } from "../middlewares/validationMiddleware.js";
 import { authenticate } from "../middlewares/authMiddleware.js";
 
@@ -23,7 +21,7 @@ router.get("/", authenticate, getChatHistoryByUserId);
 router.delete(
   "/:id",
   authenticate,
-  validateRequest(deleteChatHistoryValidation, "params"),
+  validateRequest(paramsValidation, "params"),
   deleteChatHistoryById,
 );
 

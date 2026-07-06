@@ -47,14 +47,6 @@ export const createTaskValidation = Joi.object({
   }),
 });
 
-export const taskParamsValidation = Joi.object({
-  id: Joi.string().trim().guid({ version: "uuidv4" }).required().messages({
-    "string.empty": "ID cannot be empty",
-    "string.guid": "Invalid ID format",
-    "any.required": "ID parameter is required",
-  }),
-});
-
 export const updateTaskValidation = Joi.object({
   task_name: Joi.string().trim().min(3).max(100).allow("").optional().messages({
     "string.min": "Task name must be at least 3 characters long",

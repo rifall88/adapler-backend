@@ -8,9 +8,9 @@ import {
 } from "../controllers/taskController.js";
 import {
   createTaskValidation,
-  taskParamsValidation,
   updateTaskValidation,
 } from "../validations/taskValidation.js";
+import { paramsValidation } from "../validations/paramsValidation.js";
 import { validateRequest } from "../middlewares/validationMiddleware.js";
 import { authenticate } from "../middlewares/authMiddleware.js";
 
@@ -22,10 +22,15 @@ router.get("/not-finish", authenticate, getTaskNotFinishedByUserId);
 router.put(
   "/:id",
   authenticate,
-  validateRequest(taskParamsValidation, "params"),
+  validateRequest(paramsValidation, "params"),
   validateRequest(updateTaskValidation),
   putTask,
 );
-router.delete("/:id", authenticate, deleteTaskById);
+router.delete(
+  "/:id",
+  authenticate,
+  validateRequest(paramsValidation, "params"),
+  deleteTaskById,
+);
 
 export default router;
