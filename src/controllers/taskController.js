@@ -5,6 +5,7 @@ import {
   findTaskNotFinishByUser,
   deleteTask,
 } from "../models/taskModel.js";
+import { formatDateForFE } from "../utils/dateFormatter.js";
 import { v4 as uuidv4 } from "uuid";
 
 export const addTask = async (req, res) => {
@@ -146,12 +147,20 @@ export const putTask = async (req, res) => {
 export const getTaskFinishedByUserId = async (req, res) => {
   try {
     const userId = req.user.id;
-
     const tasks = await findTaskFinishByUser(userId);
+
+    const formattedData = (tasks || []).map((taskItem) => {
+      const { deadline, ...sisaData } = taskItem;
+      return {
+        ...sisaData,
+        deadline: formatDateForFE(deadline),
+      };
+    });
+
     return res.status(200).json({
       status: "success",
       data: {
-        tasks: tasks || [],
+        tasks: formattedData || [],
       },
     });
   } catch (error) {
@@ -166,12 +175,20 @@ export const getTaskFinishedByUserId = async (req, res) => {
 export const getTaskNotFinishedByUserId = async (req, res) => {
   try {
     const userId = req.user.id;
-
     const tasks = await findTaskNotFinishByUser(userId);
+
+    const formattedData = (tasks || []).map((taskItem) => {
+      const { deadline, ...sisaData } = taskItem;
+      return {
+        ...sisaData,
+        deadline: formatDateForFE(deadline),
+      };
+    });
+
     return res.status(200).json({
       status: "success",
       data: {
-        tasks: tasks || [],
+        tasks: formattedData || [],
       },
     });
   } catch (error) {

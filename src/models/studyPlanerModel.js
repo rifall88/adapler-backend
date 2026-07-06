@@ -35,6 +35,35 @@ export const findDetailStudyPlanner = async (id, userId) => {
   return result.rows[0];
 };
 
+export const updateStudyPlanner = async (id, data, userId) => {
+  const allowedColumns = ["detail_jadwal"];
+  const fields = [];
+  const values = [];
+  let index = 1;
+
+  for (const key in data) {
+    if (allowedColumns.includes(key)) {
+      fields.push(`${key} = $${index}`);
+      values.push(data[key]);
+      index++;
+    }
+  }
+
+  fields.push(`updated_at = NOW()`);
+  values.push(id);
+  values.push(userId);
+
+  const result = await pool.query(
+    `UPDATE analytics.study_planer
+    SET ${fields.join(", ")}
+    WHERE id = $${index} AND user_id = $${index + 1}
+    RETURNING *`,
+    values,
+  );
+
+  return result.rows[0];
+};
+
 export const deleteStudyPlanner = async (id, userId) => {
   const result = await pool.query(
     `DELETE FROM analytics.study_planer

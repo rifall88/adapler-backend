@@ -23,7 +23,7 @@ router.get("/", authenticate, getChatHistoryByUserId);
 router.delete(
   "/:id",
   authenticate,
-  validateRequest(deleteChatHistoryById, "params"),
+  validateRequest(deleteChatHistoryValidation, "params"),
   deleteChatHistoryById,
 );
 

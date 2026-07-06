@@ -40,14 +40,14 @@ export const updateProfileValidation = Joi.object({
   jam_belajar_harian: Joi.number()
     .integer()
     .min(1)
-    .max(24)
+    .max(8)
     .allow("")
     .optional()
     .messages({
       "number.base": "Daily study hours must be a number",
       "number.integer": "Daily study hours must be an integer",
       "number.min": "Daily study hours must be at least 1 hour",
-      "number.max": "Daily study hours cannot exceed 24 hours",
+      "number.max": "Daily study hours cannot exceed 8 hours",
     }),
 
   profile_image: Joi.any().optional(),

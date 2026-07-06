@@ -2,6 +2,7 @@ import {
   createStudyPlanner,
   findStudyPlanner,
   findDetailStudyPlanner,
+  updateStudyPlanner,
   deleteStudyPlanner,
 } from "../models/studyPlanerModel.js";
 import { findUserProfile } from "../models/profileModel.js";
@@ -116,6 +117,52 @@ export const getStudyPlannerById = async (req, res) => {
   } catch (error) {
     console.error("Getting study planner error: ", error.message);
     res.status(500).json({
+      status: "failed",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const putStudyPlanner = async (req, res) => {
+  try {
+    const { detail_jadwal } = req.body;
+    const userId = req.user.id;
+    const id = req.params.id;
+
+    const data = Object.fromEntries(
+      Object.entries({
+        detail_jadwal,
+      }).filter(([_, value]) => {
+        return typeof value === "string"
+          ? value.trim() !== ""
+          : value !== undefined;
+      }),
+    );
+
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json({
+        status: "failed",
+        message: "No valid data to update",
+      });
+    }
+
+    const updatedStudyPlanner = await updateStudyPlanner(id, data, userId);
+
+    if (!updatedStudyPlanner) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Study planner not found",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      message: "Study planner updated successfully",
+      data: updatedStudyPlanner,
+    });
+  } catch (error) {
+    console.error("Error while updating study planner:", error.message);
+    return res.status(500).json({
       status: "failed",
       message: "Internal server error",
     });

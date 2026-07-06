@@ -3,6 +3,7 @@ import {
   generateStudyPlanner,
   getStudyPlannerByUserId,
   getStudyPlannerById,
+  putStudyPlanner,
   deleteStudyPlannerById,
 } from "../controllers/studyPlanerController.js";
 import {
@@ -22,10 +23,11 @@ router.post(
 );
 router.get("/", authenticate, getStudyPlannerByUserId);
 router.get("/:id", authenticate, getStudyPlannerById);
+router.put("/:id", authenticate, putStudyPlanner);
 router.delete(
   "/:id",
   authenticate,
-  validateRequest(deleteStudyPlannerById, "params"),
+  validateRequest(deleteStudyPlannerValidation, "params"),
   deleteStudyPlannerById,
 );
 
