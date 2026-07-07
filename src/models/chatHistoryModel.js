@@ -39,14 +39,3 @@ export const findChatHistory = async (userId) => {
 
   return result.rows;
 };
-
-export const deleteChatHistory = async (id, userId) => {
-  const result = await pool.query(
-    `DELETE FROM learning.chat_history
-    WHERE id = $1 AND user_id = $2
-    RETURNING *`,
-    [id, userId],
-  );
-
-  return result.rows[0];
-};

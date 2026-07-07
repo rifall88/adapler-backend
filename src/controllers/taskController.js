@@ -136,7 +136,7 @@ export const putTask = async (req, res) => {
       data: updatedTask,
     });
   } catch (error) {
-    console.error("Error while updating task:", error.message);
+    console.error("Error while updating task:", error);
     return res.status(500).json({
       status: "failed",
       message: "Internal server error",
@@ -164,7 +164,7 @@ export const getTaskFinishedByUserId = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Getting task error: ", error.message);
+    console.error("Getting task error: ", error);
     res.status(500).json({
       status: "failed",
       message: "Internal server error",
@@ -192,7 +192,7 @@ export const getTaskNotFinishedByUserId = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Getting task error: ", error.message);
+    console.error("Getting task error: ", error);
     res.status(500).json({
       status: "failed",
       message: "Internal server error",
@@ -222,7 +222,7 @@ export const deleteTaskById = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error while deleting task: ", error.message);
+    console.error("Error while deleting task: ", error);
     res.status(500).json({
       status: "failed",
       message: "Internal server error",

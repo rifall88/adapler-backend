@@ -3,7 +3,6 @@ import multer from "multer";
 import {
   putProfile,
   getUserProfile,
-  getAllUser,
   getPhotoProfile,
 } from "../controllers/profileController.js";
 import { updateProfileValidation } from "../validations/profileValidation.js";
@@ -60,6 +59,5 @@ router.put(
 );
 router.get("/", authenticate, getUserProfile);
 router.get("/photo-profile", authenticate, getPhotoProfile);
-router.get("/all", authenticate, isAdmin, getAllUser);
 
 export default router;

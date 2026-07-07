@@ -1,8 +1,4 @@
-import {
-  updateProfile,
-  findUserProfile,
-  findUserAllProfile,
-} from "../models/profileModel.js";
+import { updateProfile, findUserProfile } from "../models/profileModel.js";
 import { formatDateForFE } from "../utils/dateFormatter.js";
 import path from "path";
 import fs from "fs";
@@ -108,7 +104,7 @@ export const putProfile = async (req, res) => {
       data: updatedProfile,
     });
   } catch (error) {
-    console.error("Updating profile error:", error.message);
+    console.error("Updating profile error:", error);
     return res.status(500).json({
       status: "failed",
       message: "Internal server error",
@@ -145,7 +141,7 @@ export const getUserProfile = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Getting user error: ", error.message);
+    console.error("Getting user error: ", error);
     res.status(500).json({
       status: "failed",
       message: "Internal server error",
@@ -190,31 +186,6 @@ export const getPhotoProfile = async (req, res) => {
     });
   } catch (error) {
     console.error("Getting photo profile error:", error);
-    return res.status(500).json({
-      status: "failed",
-      message: "Internal server error",
-    });
-  }
-};
-
-export const getAllUser = async (req, res) => {
-  try {
-    const user = await findUserAllProfile();
-    const formattedData = (user || []).map((userItem) => {
-      const { created_at, ...sisaData } = userItem;
-      return {
-        ...sisaData,
-        joined_date: formatDateForFE(created_at),
-      };
-    });
-    return res.status(200).json({
-      status: "success",
-      data: {
-        users: formattedData || [],
-      },
-    });
-  } catch (error) {
-    console.error("Getting application error", error);
     return res.status(500).json({
       status: "failed",
       message: "Internal server error",

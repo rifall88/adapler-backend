@@ -145,3 +145,50 @@ export const generateMaterialSummaryWithAI = async (fileData) => {
 
   return JSON.parse(aiText);
 };
+
+export const generateQuizWithAI = async (ringkasanMateri) => {
+  try {
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: { responseMimeType: "application/json" },
+    });
+
+    const prompt = `
+      Kamu adalah EduFlow AI, asisten pembuat soal akademik.
+      Buatkan TEPAT 10 soal kuis pilihan ganda (A, B, C, D) berdasarkan ringkasan materi berikut.
+
+      RINGKASAN MATERI:
+      "${ringkasanMateri}"
+
+      ATURAN:
+      1. WAJIB membuat tepat 10 pertanyaan.
+      2. Tipe soal harus "Pilihan Ganda".
+      3. Format 'kunci_jawaban' hanya boleh berisi satu huruf yang benar (A, B, C, atau D).
+      4. Sertakan 'pembahasan' yang singkat, padat, dan jelas.
+      5. KEMBALIKAN HANYA FORMAT JSON, TANPA FORMATTING MARKDOWN (\`\`\`).
+
+      FORMAT JSON YANG WAJIB DIGUNAKAN (ARRAY OF OBJECTS):
+      [
+        {
+          "tipe_soal": "Pilihan Ganda",
+          "pertanyaan": "Pertanyaan beserta opsi A, B, C, D di dalamnya...",
+          "kunci_jawaban": "A",
+          "pembahasan": "Alasan kenapa A benar..."
+        }
+      ]
+    `;
+
+    const result = await model.generateContent(prompt);
+    let responseText = result.response.text();
+
+    responseText = responseText
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    return JSON.parse(responseText);
+  } catch (error) {
+    console.error("Error di aiService (generateQuizWithAI):", error);
+    throw new Error("Gagal generate soal kuis dari Gemini API");
+  }
+};

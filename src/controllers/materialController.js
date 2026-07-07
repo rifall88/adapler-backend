@@ -2,6 +2,7 @@ import {
   createMaterial,
   findMaterial,
   findMaterialById,
+  updateMaterial,
   deleteMaterial,
 } from "../models/materialModel.js";
 import { v4 as uuidv4 } from "uuid";
@@ -70,7 +71,7 @@ export const processNewMaterial = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Process Material Error:", error.message);
+    console.error("Process Material Error:", error);
     res
       .status(500)
       .json({ status: "failed", message: "Internal Server Error" });
@@ -99,7 +100,7 @@ export const getMaterialUserId = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Getting material error: ", error.message);
+    console.error("Getting material error: ", error);
     res.status(500).json({
       status: "failed",
       message: "Internal server error",
@@ -133,8 +134,56 @@ export const getDetailMaterial = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Getting material error: ", error.message);
+    console.error("Getting material error: ", error);
     res.status(500).json({
+      status: "failed",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const putMaterial = async (req, res) => {
+  try {
+    const { ringkasan, poin_penting, kata_kunci } = req.body;
+    const userId = req.user.id;
+    const id = req.params.id;
+
+    const data = Object.fromEntries(
+      Object.entries({
+        ringkasan,
+        poin_penting,
+        kata_kunci,
+      }).filter(([_, value]) => {
+        return typeof value === "string"
+          ? value.trim() !== ""
+          : value !== undefined;
+      }),
+    );
+
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json({
+        status: "failed",
+        message: "No valid data to update",
+      });
+    }
+
+    const updatedMaterial = await updateMaterial(id, data, userId);
+
+    if (!updatedMaterial) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Material not found",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      message: "Material updated successfully",
+      data: updatedMaterial,
+    });
+  } catch (error) {
+    console.error("Error while updating material:", error);
+    return res.status(500).json({
       status: "failed",
       message: "Internal server error",
     });
@@ -159,7 +208,7 @@ export const deleteMaterialById = async (req, res) => {
       message: "Material deletion successful",
     });
   } catch (error) {
-    console.error("Error while deleting material: ", error.message);
+    console.error("Error while deleting material: ", error);
     res.status(500).json({
       status: "failed",
       message: "Internal server error",

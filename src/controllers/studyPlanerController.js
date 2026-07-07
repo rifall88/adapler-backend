@@ -83,7 +83,7 @@ export const getStudyPlannerByUserId = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Getting study planner error: ", error.message);
+    console.error("Getting study planner error: ", error);
     res.status(500).json({
       status: "failed",
       message: "Internal server error",
@@ -115,7 +115,7 @@ export const getStudyPlannerById = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Getting study planner error: ", error.message);
+    console.error("Getting study planner error: ", error);
     res.status(500).json({
       status: "failed",
       message: "Internal server error",
@@ -161,7 +161,7 @@ export const putStudyPlanner = async (req, res) => {
       data: updatedStudyPlanner,
     });
   } catch (error) {
-    console.error("Error while updating study planner:", error.message);
+    console.error("Error while updating study planner:", error);
     return res.status(500).json({
       status: "failed",
       message: "Internal server error",
@@ -187,7 +187,7 @@ export const deleteStudyPlannerById = async (req, res) => {
       message: "Study Planner deletion successful",
     });
   } catch (error) {
-    console.error("Error while deleting study planner: ", error.message);
+    console.error("Error while deleting study planner: ", error);
     res.status(500).json({
       status: "failed",
       message: "Internal server error",

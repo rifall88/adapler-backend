@@ -4,8 +4,10 @@ import {
   processNewMaterial,
   getMaterialUserId,
   getDetailMaterial,
+  putMaterial,
   deleteMaterialById,
 } from "../controllers/materialController.js";
+import { updateMaterialValidation } from "../validations/materialValidation.js";
 import { paramsValidation } from "../validations/paramsValidation.js";
 import { validateRequest } from "../middlewares/validationMiddleware.js";
 import { authenticate } from "../middlewares/authMiddleware.js";
@@ -67,6 +69,13 @@ router.get(
   authenticate,
   validateRequest(paramsValidation, "params"),
   getDetailMaterial,
+);
+router.put(
+  "/:id",
+  authenticate,
+  validateRequest(paramsValidation, "params"),
+  validateRequest(updateMaterialValidation),
+  putMaterial,
 );
 router.delete(
   "/:id",

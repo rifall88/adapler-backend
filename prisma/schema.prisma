@@ -64,7 +64,7 @@ model User {
   task               TaskManagement[]
   study_planner      StudyPlanner[]
   material           Material[]
-  activity_log       ActivityLog[]
+  quiz_results       QuizResult[]
   chat_history       ChatHistory[]
 
   @@map("users")
@@ -161,6 +161,7 @@ model Material {
   user               User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   quiz               Quiz[]
+  quiz_results       QuizResult[]
 
   @@map("material")
   @@schema("analytics")
@@ -180,17 +181,18 @@ model Quiz {
   @@schema("learning")
 }
 
-model ActivityLog {
-  id                  String          @id @default(uuid()) @db.Uuid
-  user_id             String          @db.Uuid
-  jenis_aktivitas     String          
-  nilai_tugas         Float?          
-  keterangan          String?         @db.Text
-  created_at          DateTime        @default(now())
-  user                User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+model QuizResult {
+  id                 String          @id @default(uuid()) @db.Uuid
+  user_id            String          @db.Uuid
+  material_id        String          @db.Uuid
+  score              Float
+  created_at         DateTime        @default(now())
+  
+  user               User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  material           Material        @relation(fields: [material_id], references: [id], onDelete: Cascade)
 
-  @@map("activity_log")
-  @@schema("analytics")
+  @@map("quiz_results")
+  @@schema("learning")
 }
 
 model ChatHistory {

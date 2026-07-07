@@ -34,6 +34,12 @@
       "name": "Material"
     },
     {
+      "name": "Quiz"
+    },
+    {
+      "name": "Quiz Score"
+    },
+    {
       "name": "Chat History"
     }
   ],
@@ -275,16 +281,6 @@
       "get": {
         "tags": ["Profiles"],
         "summary": "Get photo profile user",
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "200": { "description": "Ok." }
-        }
-      }
-    },
-    "/profiles/all": {
-      "get": {
-        "tags": ["Profiles"],
-        "summary": "Get all users (admin only)",
         "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": { "description": "Ok." }
@@ -582,6 +578,49 @@
           "200": { "description": "Ok." }
         }
       },
+      "put": {
+        "tags": ["Material"],
+        "summary": "Update material",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ringkasan": { "type": "string" },
+                  "poin_penting": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "kata_kunci": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                },
+                "required": [
+                  "nama_file",
+                  "ringkasan",
+                  "poin_penting",
+                  "kata_kunci"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Material updated successfully." }
+        }
+      },
       "delete": {
         "tags": ["Material"],
         "summary": "Delete material by ID",
@@ -589,6 +628,100 @@
         "parameters": [
           {
             "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Ok." }
+        }
+      }
+    },
+    "/quiz": {
+      "post": {
+        "tags": ["Quiz"],
+        "summary": "Generate quiz with AI",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "materialId": {
+                    "type": "string"
+                  }
+                },
+                "required": ["materialId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Questions generated successfully." }
+        }
+      }
+    },
+    "/quiz/{materialId}": {
+      "get": {
+        "tags": ["Quiz"],
+        "summary": "Get quiz by material ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "materialId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Ok." }
+        }
+      }
+    },
+    "/nilai-quiz/{materialId}": {
+      "post": {
+        "tags": ["Quiz Score"],
+        "summary": "Submit quiz",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "materialId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jawabanUser": {
+                    "type": "object"
+                  }
+                },
+                "required": ["jawabanUser"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Quiz submitted successfully." }
+        }
+      },
+      "get": {
+        "tags": ["Quiz Score"],
+        "summary": "Get quiz score by material ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "materialId",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -630,24 +763,6 @@
         "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": { "description": "Ok." }
-        }
-      }
-    },
-    "/chat-history/{id}": {
-      "delete": {
-        "tags": ["Chat History"],
-        "summary": "Delete chat history by ID",
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": { "description": "Chat history deletion successful." }
         }
       }
     }

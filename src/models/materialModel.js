@@ -41,6 +41,41 @@ export const findMaterialById = async (id, userId) => {
   return result.rows[0];
 };
 
+export const updateMaterial = async (id, data, userId) => {
+  const allowedColumns = ["ringkasan", "poin_penting", "kata_kunci"];
+  const fields = [];
+  const values = [];
+  let index = 1;
+
+  for (const key in data) {
+    if (allowedColumns.includes(key)) {
+      fields.push(`${key} = $${index}`);
+
+      const valueToInsert =
+        typeof data[key] === "object" && data[key] !== null
+          ? JSON.stringify(data[key])
+          : data[key];
+
+      values.push(valueToInsert);
+      index++;
+    }
+  }
+
+  fields.push(`updated_at = NOW()`);
+  values.push(id);
+  values.push(userId);
+
+  const result = await pool.query(
+    `UPDATE analytics.material
+    SET ${fields.join(", ")}
+    WHERE id = $${index} AND user_id = $${index + 1}
+    RETURNING *`,
+    values,
+  );
+
+  return result.rows[0];
+};
+
 export const deleteMaterial = async (id, userId) => {
   const result = await pool.query(
     `DELETE FROM analytics.material

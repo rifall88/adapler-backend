@@ -8,9 +8,11 @@ import authRoute from "./routes/authRoute.js";
 import passwordResetRoute from "./routes/passwordResetRoute.js";
 import profileRoute from "./routes/profileRoute.js";
 import taskRoute from "./routes/taskRoute.js";
-import studyPlaner from "./routes/studyPlanerRoute.js";
-import chatHistory from "./routes/chatHistoryRoute.js";
-import material from "./routes/materialRoute.js";
+import studyPlanerRoute from "./routes/studyPlanerRoute.js";
+import materialRoute from "./routes/materialRoute.js";
+import quizRoute from "./routes/quizRoute.js";
+import nilaiQuizRoute from "./routes/nilaiQuizRoute.js";
+import chatHistoryRoute from "./routes/chatHistoryRoute.js";
 
 dotenv.config();
 
@@ -37,9 +39,11 @@ app.use("/auth", authRoute);
 app.use("/forgot-password", passwordResetRoute);
 app.use("/profiles", profileRoute);
 app.use("/task", taskRoute);
-app.use("/study-planner", studyPlaner);
-app.use("/chat-history", chatHistory);
-app.use("/material", material);
+app.use("/study-planner", studyPlanerRoute);
+app.use("/material", materialRoute);
+app.use("/quiz", quizRoute);
+app.use("/nilai-quiz", nilaiQuizRoute);
+app.use("/chat-history", chatHistoryRoute);
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

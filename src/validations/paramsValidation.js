@@ -7,3 +7,15 @@ export const paramsValidation = Joi.object({
     "any.required": "ID parameter is required",
   }),
 });
+
+export const materialIdValidation = Joi.object({
+  materialId: Joi.string()
+    .trim()
+    .guid({ version: "uuidv4" })
+    .required()
+    .messages({
+      "string.empty": "Material ID cannot be empty",
+      "string.guid": "Invalid Material ID format",
+      "any.required": "Material ID is required",
+    }),
+});
