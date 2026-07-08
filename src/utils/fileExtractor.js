@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { parseOffice } from "officeparser";
 import mammoth from "mammoth";
 import * as xlsx from "xlsx";
 
@@ -34,6 +35,16 @@ export const extractDataFromFile = async (file) => {
     return {
       type: "text",
       content: result.value,
+    };
+  }
+
+  if (ext === ".pptx") {
+    const result = await parseOffice(filePath);
+    console.log(result);
+
+    return {
+      type: "text",
+      content: result.toText(),
     };
   }
 

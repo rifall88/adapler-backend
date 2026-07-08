@@ -22,8 +22,8 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:85",
-      "http://192.168.20.31:85",
-      "https://smart-dtwin.projectbase.my.id",
+      "http://192.168.20.32:85",
+      "https://smart-adapler.projectbase.my.id",
     ],
     credentials: true,
   }),

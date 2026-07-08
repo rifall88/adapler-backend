@@ -25,6 +25,7 @@
     "multer": "^2.2.0",
     "nodemailer": "^9.0.1",
     "nodemon": "^3.1.14",
+    "officeparser": "^7.2.3",
     "pdfjs-dist": "^6.1.200",
     "pg": "^8.22.0",
     "prisma": "^6.19.3",
