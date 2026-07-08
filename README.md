@@ -33,6 +33,6 @@ Sebelum menjalankan proyek ini, pastikan perangkat Anda telah menginstal:
 **1. Kloning Repositori**
 
 ```bash
-git clone [https://github.com/rifall88/adapler-backend.git](https://github.com/rifall88/adapler-backend.git)
+git clone https://github.com/rifall88/adapler-backend.git
 cd adapler-backend
 ```
