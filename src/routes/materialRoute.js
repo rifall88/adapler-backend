@@ -4,6 +4,7 @@ import {
   processNewMaterial,
   getMaterialUserId,
   getDetailMaterial,
+  getDocumentMaterial,
   putMaterial,
   deleteMaterialById,
 } from "../controllers/materialController.js";
@@ -69,6 +70,12 @@ router.get(
   authenticate,
   validateRequest(paramsValidation, "params"),
   getDetailMaterial,
+);
+router.get(
+  "/document/:id",
+  authenticate,
+  validateRequest(paramsValidation, "params"),
+  getDocumentMaterial,
 );
 router.put(
   "/:id",

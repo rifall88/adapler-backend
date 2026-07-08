@@ -56,8 +56,6 @@ export const processNewMaterial = async (req, res) => {
       kata_kunci: aiSummary.kata_kunci,
     });
 
-    fs.unlinkSync(filePath);
-
     res.status(201).json({
       status: "success",
       message: "Material processed successfully",
@@ -136,6 +134,51 @@ export const getDetailMaterial = async (req, res) => {
   } catch (error) {
     console.error("Getting material error: ", error);
     res.status(500).json({
+      status: "failed",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getDocumentMaterial = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const userId = req.user.id;
+
+    const material = await findMaterialById(id, userId);
+    if (!material) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Material not found",
+      });
+    }
+
+    const documentPath = material.nama_file;
+
+    if (!documentPath) {
+      return res.status(404).json({
+        status: "failed",
+        message: "User does not have a material",
+      });
+    }
+
+    const filePath = path.join(process.cwd(), documentPath);
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Material file is missing from the server",
+      });
+    }
+
+    return res.status(200).sendFile(filePath, {
+      headers: {
+        "Content-Disposition": `inline; filename="${path.basename(filePath)}"`,
+      },
+    });
+  } catch (error) {
+    console.error("Getting material error:", error);
+    return res.status(500).json({
       status: "failed",
       message: "Internal server error",
     });

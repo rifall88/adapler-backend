@@ -38,6 +38,13 @@ export const addTask = async (req, res) => {
       });
     }
 
+    if (status === "selesai" && progres !== 100) {
+      return res.status(400).json({
+        status: "failed",
+        message: "Status can only be 'completed' if progress is 100%",
+      });
+    }
+
     const taskData = await createTask({
       id: uuidv4(),
       user_id: userId,

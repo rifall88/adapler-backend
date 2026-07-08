@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://192.168.20.32:2051",
+      "url": "https://adapler-api.inidito.my.id",
       "description": "Development Server"
     }
   ],
@@ -561,10 +561,28 @@
         }
       }
     },
+    "/material/document/{id}": {
+      "get": {
+        "tags": ["Material"],
+        "summary": "Get material file by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Ok." }
+        }
+      }
+    },
     "/material/{id}": {
       "get": {
         "tags": ["Material"],
-        "summary": "Get material by user ID",
+        "summary": "Get material by ID",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {

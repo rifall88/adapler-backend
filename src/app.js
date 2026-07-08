@@ -44,6 +44,7 @@ app.use("/material", materialRoute);
 app.use("/quiz", quizRoute);
 app.use("/nilai-quiz", nilaiQuizRoute);
 app.use("/chat-history", chatHistoryRoute);
+app.use("/uploads", express.static("uploads"));
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
