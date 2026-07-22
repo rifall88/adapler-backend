@@ -24,6 +24,7 @@ export const addTask = async (req, res) => {
 
     const today = new Date();
     const combinedDeadline = new Date(`${deadline_date}T${deadline_time}:00`);
+    combinedDeadline.setHours(combinedDeadline.getHours() - 7);
 
     if (isNaN(combinedDeadline.getTime())) {
       return res
@@ -91,6 +92,7 @@ export const putTask = async (req, res) => {
       }
 
       combinedDeadline = new Date(`${deadline_date}T${deadline_time}:00`);
+      combinedDeadline.setHours(combinedDeadline.getHours() - 7);
 
       if (isNaN(combinedDeadline.getTime())) {
         return res.status(400).json({
